@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>光之美少女・閃耀大亂鬥</title><link rel="stylesheet" href="style.css"></head><body>
+<div id="setup" class="panel"><div class="seal">♥</div><h1>光之美少女・閃耀大亂鬥</h1><p class="sub">光之美少女同人・隱藏身分卡牌</p>
+<label>玩家人數 <select id="np"><option>4</option><option selected>5</option><option>6</option><option>7</option></select></label>
+<label>AI 速度 <select id="spd"><option value="900">慢</option><option value="500" selected>中</option><option value="150">快</option></select></label>
+<label>座位 <select id="seat"></select></label>
+<label>身分偏好 <select id="rolep"><option value="">隨機</option><option value="sheriff">光之隊長</option><option value="deputy">光之夥伴（5人以上）</option><option value="outlaw">黑暗勢力</option><option value="renegade">背叛者</option></select></label>
+<div class="pickh">選擇角色（未選則隨機其一）<button id="reroll" class="ghost">換一批</button></div><div id="offer"></div>
+<button id="start" class="big">變身開戰！</button> <button id="ropen" class="ghost">規則說明</button>
+<div class="rules"><b>規則速覽</b>　光之隊長公開身分；光之夥伴助光之隊長；黑暗勢力要擊敗光之隊長；背叛者要成為最後生還者。點手牌→點紅框目標出牌。光之衝擊每回合限一次，距離需在武器範圍內；手牌上限＝體力。</div></div>
+<div id="game" hidden>
+ <div id="room"><div id="sideL" class="side v"></div><div id="sideT" class="side h"></div><div id="sideR" class="side v"></div>
+  <div id="table"><div class="carve"><div class="felt">
+   <div class="pile" id="deckPile"><div class="back"></div><div class="back"></div><div class="back"><span>♥</span></div><div class="cap" id="deckCap"></div></div>
+   <div class="slot" id="playSlot"><div class="cap" id="playCap">♥ 光之舞台 ♥</div></div>
+   <div class="pile" id="discPile"><div class="cap" id="discCap"></div></div>
+   <div id="banner"></div><div id="ticker"></div></div></div></div>
+  <div id="bottom"><div id="mySeat"></div><div id="handWrap"><div id="mebar"></div><div id="hand"></div><div id="btns"></div></div></div>
+ </div>
+ <div id="side" class="closed"><div id="info"></div><div id="log"></div></div><button id="logbtn" class="ghost">戰報 ◂</button>
+</div>
+<svg id="fx" width="100%" height="100%"><defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ff5a4a"/></marker></defs></svg>
+<div id="rules" hidden><div class="box"><div id="rbody"></div><button id="rclose">關閉</button></div></div>
+<div id="zoom" hidden></div>
+<div id="modal" hidden><div class="box"><div id="mtitle"></div><div id="msub"></div><div id="mbody"></div></div></div>
+<script src="assets/manifest.js"></script><script src="engine.js"></script><script src="ui.js"></script></body></html>

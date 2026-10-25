@@ -1,0 +1,447 @@
+:root{--ink:#1b1712;--wood:#5b3920;--wood2:#7d5130;--wood3:#3a2414;--jade:#2f7f66;--jade2:#9fd8c0;--paper:#f4ead3;--red:#a62d24;--gold:#d8b05a;--gold2:#f3d98f}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{height:100%}body{margin:0;overflow:hidden;font-family:"Huninn","jf-openhuninn",sans-serif;color:var(--paper);
+ background:radial-gradient(ellipse at 50% 40%,#3d2b1d 0%,#1a130d 70%,#0d0906 100%)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background:repeating-linear-gradient(115deg,transparent 0 7px,rgba(255,255,255,.04) 7px 8px),repeating-radial-gradient(circle at 20% 30%,transparent 0 30px,rgba(0,0,0,.25) 31px 33px)}
+button{font:inherit;color:#fff;border:1px solid var(--jade2);border-radius:6px;padding:6px 16px;cursor:pointer;letter-spacing:2px;
+ background:linear-gradient(#3e9c7f,#1f5d4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.5);text-shadow:0 1px 1px #000}
+button:hover{filter:brightness(1.15)}button.big{font-size:20px;padding:10px 30px;margin-top:10px}button.ghost{background:linear-gradient(#6b4a30,#3d2716);border-color:var(--gold)}
+select{font:inherit;background:var(--paper);border:1px solid var(--gold);border-radius:4px;padding:2px 6px}
+.panel{position:relative;max-width:560px;margin:9vh auto;padding:34px 30px;text-align:center;border-radius:14px;
+ background:repeating-linear-gradient(92deg,rgba(0,0,0,.08) 0 3px,transparent 3px 11px),linear-gradient(160deg,#7d5130,#4b2e19);border:2px solid var(--gold);box-shadow:0 0 0 6px var(--wood3),0 0 0 8px var(--gold),0 20px 60px #000}
+.panel h1{font-size:44px;margin:0;color:var(--gold2);letter-spacing:8px;text-shadow:0 2px 0 #000,0 0 18px rgba(216,176,90,.5)}.sub{color:var(--jade2);letter-spacing:3px}
+.panel label{display:block;margin:12px;font-size:18px}.rules{text-align:left;font-size:14px;margin-top:20px;line-height:1.8;background:rgba(0,0,0,.25);padding:10px 14px;border-left:3px solid var(--jade)}
+.seal{position:absolute;right:18px;top:18px;width:48px;height:48px;border:3px solid var(--red);color:var(--red);font-size:30px;line-height:42px;border-radius:6px;transform:rotate(8deg);background:rgba(244,234,211,.9)}
+#game{display:grid;grid-template-columns:1fr clamp(240px,18vw,330px);height:100vh;gap:10px;padding:10px}
+#room{display:grid;grid-template-columns:var(--sideW) 1fr var(--sideW);grid-template-rows:auto 1fr auto;gap:10px;min-height:0;--sideW:clamp(190px,14vw,250px)}
+.side{display:flex;gap:10px;justify-content:center;align-items:center;min-height:0}.side.v{flex-direction:column}
+#sideT{grid-column:2;grid-row:1}#sideL{grid-column:1;grid-row:1/3;flex-direction:column-reverse}#sideR{grid-column:3;grid-row:1/3}
+#table{grid-column:2;grid-row:2;display:flex;align-items:center;justify-content:center;min-height:0}
+.carve{width:min(100%,92vh);height:100%;max-height:560px;padding:14px;border-radius:18px;position:relative;
+ background:repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0 2px,transparent 2px 9px,rgba(255,220,170,.05) 9px 10px,transparent 10px 17px),linear-gradient(135deg,#8a5a35,#5b3920 50%,#734a2b);
+ box-shadow:inset 0 0 0 3px #2c1a0d,inset 0 0 0 6px #9b6a40,inset 0 0 0 8px #2c1a0d,0 18px 40px rgba(0,0,0,.7),0 0 0 2px #1a0f07}
+.carve::before,.carve::after{content:"❖";position:absolute;color:var(--gold);opacity:.7;font-size:18px;left:6px;top:2px}.carve::after{left:auto;right:6px;top:auto;bottom:2px}
+.felt{height:100%;border-radius:10px;position:relative;display:flex;align-items:center;justify-content:center;gap:5%;
+ background:radial-gradient(ellipse at center,rgba(255,230,180,.12),transparent 70%),repeating-linear-gradient(0deg,rgba(0,0,0,.1) 0 1px,transparent 1px 6px),linear-gradient(#6d4426,#4d2f19);
+ box-shadow:inset 0 0 30px rgba(0,0,0,.7),inset 0 0 0 2px rgba(216,176,90,.5)}
+.felt::before{content:"";position:absolute;inset:12px;border:1px dashed rgba(216,176,90,.35);border-radius:8px;pointer-events:none}
+.pile,.slot{position:relative;width:96px;height:136px}.slot{width:110px;height:154px;border:2px dashed rgba(159,216,192,.5);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.cap{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:13px;color:var(--gold2);text-shadow:0 1px 2px #000}
+#playSlot .cap{bottom:-26px}#playSlot>.cap:only-child{position:static;transform:none;color:var(--jade2);opacity:.7}
+.back{position:absolute;inset:0;border-radius:9px;border:2px solid var(--gold);background:repeating-linear-gradient(45deg,#1e5a48 0 6px,#174a3a 6px 12px);box-shadow:0 2px 4px rgba(0,0,0,.6)}
+.back:nth-child(1){transform:translate(-4px,4px)}.back:nth-child(2){transform:translate(-2px,2px)}
+.back span{position:absolute;inset:30% 22%;border:2px solid var(--gold);border-radius:50%;color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:28px;background:rgba(0,0,0,.25)}
+#banner{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:15px;color:var(--gold2);letter-spacing:2px;text-shadow:0 1px 3px #000;white-space:nowrap;z-index:8}
+#banner.win{top:0;left:0;right:0;bottom:0;transform:none;width:auto;height:auto;display:flex;align-items:center;justify-content:center;text-align:center;white-space:normal;font-size:26px;padding:20px;background:rgba(10,6,20,.74);border:none;border-radius:10px}
+.felt:has(#banner.win) .cap{visibility:hidden}
+/* seats */
+.seat{width:100%;max-width:250px;position:relative;border-radius:10px;padding:7px 9px 7px;color:var(--paper);
+ background:linear-gradient(rgba(255,255,255,.06),transparent 40%),repeating-linear-gradient(95deg,rgba(0,0,0,.1) 0 2px,transparent 2px 8px),linear-gradient(160deg,var(--wood2),var(--wood3));
+ border:1px solid #120a04;box-shadow:inset 0 0 0 1px rgba(216,176,90,.45),0 6px 14px rgba(0,0,0,.6);transition:box-shadow .3s,transform .2s}
+.side.h .seat{width:230px}
+.seat.cur{box-shadow:inset 0 0 0 2px var(--gold2),0 0 0 2px var(--gold),0 0 22px 4px rgba(243,217,143,.55);animation:glow 1.6s ease-in-out infinite alternate}
+@keyframes glow{to{box-shadow:inset 0 0 0 2px var(--gold2),0 0 0 2px var(--gold),0 0 34px 8px rgba(243,217,143,.75)}}
+.seat.dead{filter:grayscale(1) brightness(.6)}.seat.dead::after{content:"殞";position:absolute;right:40%;top:18%;font-size:42px;color:rgba(166,45,36,.85);border:3px solid rgba(166,45,36,.85);border-radius:50%;width:60px;height:60px;line-height:54px;text-align:center;transform:rotate(-15deg)}
+.seat.tgt{cursor:pointer;box-shadow:inset 0 0 0 2px #ff7a6b,0 0 0 2px #e6584c,0 0 22px #e6584c;transform:translateY(-2px)}.seat.tgt:hover{transform:scale(1.03)}
+.seat.flash{animation:hit .5s}@keyframes hit{0%,100%{filter:none}30%{filter:brightness(1.8) sepia(1) hue-rotate(-30deg)}}
+.seat .top{display:flex;align-items:center;gap:8px}
+.avatar{width:38px;height:38px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink);background:radial-gradient(circle at 35% 30%,#fff7e2,#d7c194);border:2px solid var(--gold);box-shadow:0 0 0 2px var(--wood3)}
+.seat h3{margin:0;font-size:18px;color:var(--gold2);letter-spacing:1px;text-shadow:0 1px 0 #000;line-height:1.1}.seat h3 small{font-size:11px;color:var(--jade2);font-weight:normal}
+.role{margin-left:auto;font-size:12px;padding:2px 7px;border-radius:3px;background:#111;border:1px solid rgba(255,255,255,.3);letter-spacing:1px}
+.role.sheriff{background:linear-gradient(#e0b345,#8a6511);color:#1b1307}.role.deputy{background:linear-gradient(#3f86cf,#1e4f80)}.role.outlaw{background:linear-gradient(#c8473c,#7a1e17)}.role.renegade{background:linear-gradient(#8a5bc4,#4a2a75)}
+.hp{display:flex;gap:3px;margin:5px 0 3px;flex-wrap:wrap}
+.stats{font-size:12px;display:flex;gap:8px;color:#e8d9b5}.stats b{color:var(--jade2)}.skill{font-size:11px;color:var(--jade2);margin-top:3px;line-height:1.3}
+.eq{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;min-height:4px}
+.chip{font-size:11px;padding:1px 6px;border-radius:10px;color:var(--ink);background:linear-gradient(#e7f6ef,#9fd8c0);border:1px solid #1f5d4a}.chip.j{background:linear-gradient(#fbe7ad,#d8b05a);border-color:#7a5a1a}
+.mini{display:inline-flex;gap:2px;margin-left:4px;vertical-align:middle}.mini i{width:8px;height:12px;border-radius:2px;background:linear-gradient(#2a7a60,#174a3a);border:1px solid var(--gold);display:inline-block}
+/* bottom */
+#bottom{grid-column:1/4;grid-row:3;display:flex;gap:10px;align-items:stretch}
+#mySeat{width:var(--sideW);flex:none;display:flex;align-items:flex-end}#mySeat .seat{max-width:none}
+#handWrap{flex:1;min-width:0;border-radius:10px;padding:8px 12px;background:repeating-linear-gradient(92deg,rgba(0,0,0,.08) 0 3px,transparent 3px 10px),linear-gradient(#4d2f19,#2e1c0e);border:1px solid var(--gold);box-shadow:inset 0 0 20px rgba(0,0,0,.6)}
+#mebar{font-size:14px;color:#e8d9b5}#mebar b{color:var(--gold2)}
+#hand{display:flex;gap:6px;min-height:156px;padding:16px 0 4px;overflow-x:auto;overflow-y:visible}
+#btns{display:flex;gap:8px;align-items:center;min-height:34px}#hint{color:var(--jade2);font-size:14px;letter-spacing:1px}
+/* cards */
+.card{--band:#7a5a3a;width:96px;height:136px;flex:none;border-radius:9px;position:relative;cursor:pointer;color:var(--ink);overflow:hidden;
+ background:radial-gradient(circle at 50% 45%,#fffaf0,#efe1bf 70%,#dcc89a);border:1px solid #2a1c0e;box-shadow:inset 0 0 0 3px #fffaf0,inset 0 0 0 4px var(--band),0 3px 6px rgba(0,0,0,.5);transition:transform .15s,box-shadow .15s,filter .25s,opacity .25s}
+.card:hover{transform:translateY(-6px)}.card.sel{transform:translateY(-14px);box-shadow:inset 0 0 0 3px #fffaf0,inset 0 0 0 4px var(--band),0 0 0 3px var(--gold2),0 8px 16px rgba(0,0,0,.6)}.card.no{filter:saturate(.6) brightness(.95);opacity:.78}
+.card.k-attack{--band:#a62d24}.card.k-resp{--band:#2b5f9e}.card.k-heal{--band:#2f7f66}.card.k-trick{--band:#7a4a9e}.card.k-equip{--band:#8a6511}.card.k-judge{--band:#3a3a3a}
+.card .band{position:absolute;left:4px;right:4px;top:4px;height:18px;background:var(--band);color:#fff;font-size:10px;text-align:right;padding:2px 6px 0 0;letter-spacing:1px;border-radius:5px 5px 0 0}
+.card .cn{position:absolute;left:6px;top:4px;z-index:1;display:flex;flex-direction:column;align-items:center;line-height:1;font-size:13px;font-weight:bold;color:#fff;text-shadow:0 1px 1px #000}
+.card .cn.br{left:auto;top:auto;right:6px;bottom:4px;transform:rotate(180deg);color:var(--ink);text-shadow:none}.card .cn.r.br{color:var(--red)}
+.card .glyph{position:absolute;left:50%;top:30px;transform:translateX(-50%);width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--band);border:2px solid var(--band);background:rgba(255,255,255,.6);box-shadow:inset 0 0 0 2px #fffaf0,inset 0 0 0 3px var(--band)}
+.card .nm{position:absolute;top:80px;left:0;right:0;text-align:center;font-size:15px;font-weight:bold;letter-spacing:1px}
+.card .ds{position:absolute;top:99px;left:7px;right:14px;font-size:10px;line-height:1.2;color:#4a3a28;text-align:center}
+.fly{position:fixed;z-index:50;pointer-events:none;transition:transform .55s cubic-bezier(.2,.8,.3,1),opacity .55s}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:40}#fx line{stroke:#ff5a4a;stroke-width:4;stroke-dasharray:10 6;filter:drop-shadow(0 0 4px #ff5a4a);animation:dash .5s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-16}}
+/* side panel */
+#side{display:flex;flex-direction:column;gap:10px;min-height:0}
+#info{border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.7;background:linear-gradient(160deg,var(--wood2),var(--wood3));border:1px solid var(--gold);box-shadow:0 4px 10px rgba(0,0,0,.5)}
+#info h2{margin:0 0 4px;font-size:20px;color:var(--gold2);letter-spacing:4px}
+#log{flex:1;overflow:auto;color:var(--ink);border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.6;
+ background:linear-gradient(90deg,rgba(0,0,0,.06),transparent 6%,transparent 94%,rgba(0,0,0,.06)),#f1e5c8;border:6px solid var(--wood);box-shadow:inset 0 0 18px rgba(120,80,30,.35),0 4px 10px rgba(0,0,0,.5)}
+#log div{padding:1px 0;border-bottom:1px dotted rgba(90,60,30,.2)}#log .turn{color:var(--jade);font-weight:bold;margin-top:4px}#log .dmg{color:var(--red)}#log .big{color:#8a6511;font-weight:bold}
+/* modal */
+#modal{position:fixed;inset:0;z-index:60;background:radial-gradient(rgba(0,0,0,.55),rgba(0,0,0,.88));display:flex;align-items:center;justify-content:center;animation:fade .2s;padding-bottom:var(--safe-bottom,0px);box-sizing:border-box}
+@keyframes fade{from{opacity:0}}
+#modal .box{min-width:380px;max-width:680px;text-align:center;padding:22px 26px;border-radius:14px;background:repeating-linear-gradient(92deg,rgba(0,0,0,.08) 0 3px,transparent 3px 11px),linear-gradient(160deg,#7d5130,#3a2414);border:2px solid var(--gold);box-shadow:0 0 0 5px var(--wood3),0 0 0 7px var(--gold),0 20px 50px #000}
+#mtitle{font-size:22px;color:var(--gold2);letter-spacing:2px;margin-bottom:4px}#msub{color:var(--jade2);font-size:14px;margin-bottom:14px}#mbody{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
+
+#offer{display:flex;gap:10px;justify-content:center;margin:6px 0 12px}.ofr{width:150px;padding:10px;border:1px solid #6b5330;border-radius:10px;background:rgba(0,0,0,.25);cursor:pointer;text-align:center}
+.ofr.on{border-color:#7fd4b0;box-shadow:0 0 12px #7fd4b0}.ofr p{font-size:12px;margin:6px 0 0;color:#cfe}.ofr .avatar{margin:0 auto 4px}.ofr small{display:block;color:#c9b}
+.pickh{margin-top:8px}.pickh button{margin-left:8px;padding:2px 10px;font-size:12px}
+.skbtn{display:none;position:absolute;right:6px;bottom:6px;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:#2f6b57;color:#eafff4;font-size:12px;cursor:pointer}
+.seat{position:relative}#tip{position:fixed;z-index:99;max-width:250px;background:#1d1610;border:1px solid #7fd4b0;color:#eafff4;padding:6px 10px;border-radius:8px;font-size:13px}
+.card.good{outline:3px solid #6fe0a8}#mbody .card.sel{outline:3px solid #ffd76a;transform:translateY(-6px)}
+
+#rules{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
+#rules .box{max-width:560px;max-height:85vh;overflow:auto;background:#3a2716;border:2px solid #c9a45c;border-radius:12px;padding:18px 22px;color:#f1e4c6;font-size:14px;line-height:1.6}
+#rules h3{color:#f3d98f;margin:0 0 8px}.rbtn{font-size:12px;padding:2px 8px;margin-left:6px;vertical-align:middle}.skill.rr{color:#e9b0ff}
+
+/* ---- art assets (only applied when the file exists in assets/manifest.js) ---- */
+.avatar.img{color:transparent;background-size:cover;background-position:center 20%;width:48px;height:48px;border-radius:10px;box-shadow:0 0 0 2px var(--gold),0 2px 6px rgba(0,0,0,.6)}
+.seat.dead .avatar.img{filter:grayscale(1) brightness(.6)}.ofr .avatar.img{width:96px;height:96px}
+.card .art{position:absolute;left:4px;right:4px;top:22px;height:56px;background-size:cover;background-position:center;border-bottom:2px solid var(--band);box-shadow:inset 0 0 8px rgba(0,0,0,.35)}
+.card.has-art .glyph{left:auto;right:6px;top:58px;transform:none;width:20px;height:20px;font-size:12px;border-width:1px;background:#fff8e6;z-index:1}
+.card.has-art .nm{top:80px}.card.has-art .ds{top:99px}
+/* fallback texture for any card key that truly has no art file, so it doesn't look like a broken/missing image */
+.card:not(.has-art){background:radial-gradient(1.5px 1.5px at 20% 22%,#fff,transparent),radial-gradient(1.5px 1.5px at 72% 58%,#fff,transparent),radial-gradient(1px 1px at 45% 78%,#fff,transparent),radial-gradient(1px 1px at 85% 30%,#fff,transparent),radial-gradient(ellipse at 50% 38%,rgba(255,255,255,.55),transparent 65%),radial-gradient(circle at 50% 45%,#fffaf0,#efe1bf 70%,#dcc89a)}
+.back.img{background-size:cover;background-position:center}.back.img span{display:none}
+body{background-size:cover;background-position:center}.felt{background-size:cover,cover;background-position:center}
+
+/* ================= v6: big, viewport-scaled layout =================
+   --u = 1px at 1920x1080, scales with the smaller of width/height ratio */
+:root{--u:min(calc(100vw / 1920),calc(100vh / 1080))}
+body{font-size:calc(18*var(--u))}
+button{font-size:calc(20*var(--u));padding:calc(8*var(--u)) calc(22*var(--u));border-radius:calc(8*var(--u))}
+button.big{font-size:calc(28*var(--u));padding:calc(12*var(--u)) calc(40*var(--u));margin-top:calc(12*var(--u))}
+select{font-size:calc(20*var(--u));padding:calc(3*var(--u)) calc(8*var(--u))}
+/* setup */
+.panel{position:fixed;inset:0;margin:auto;max-width:calc(1560*var(--u));padding:calc(44*var(--u)) calc(56*var(--u));max-height:92vh;height:fit-content;overflow:auto}
+.panel h1{font-size:calc(80*var(--u))}.sub{font-size:calc(24*var(--u));margin:calc(10*var(--u)) 0}
+.panel label{display:inline-block;margin:calc(14*var(--u)) calc(18*var(--u));font-size:calc(25*var(--u))}
+.rules{font-size:calc(19*var(--u));margin-top:calc(26*var(--u));padding:calc(12*var(--u)) calc(16*var(--u))}
+.seal{width:calc(70*var(--u));height:calc(70*var(--u));font-size:calc(44*var(--u));line-height:calc(62*var(--u));right:calc(34*var(--u));top:calc(34*var(--u))}
+.pickh{font-size:calc(22*var(--u));margin-top:calc(8*var(--u))}.pickh button{font-size:calc(17*var(--u));padding:calc(4*var(--u)) calc(13*var(--u))}
+#offer{gap:calc(30*var(--u));margin:calc(14*var(--u)) 0}.ofr{width:calc(430*var(--u));padding:calc(20*var(--u));border-radius:calc(16*var(--u))}
+.ofr .avatar,.ofr .avatar.img{width:calc(330*var(--u));height:calc(330*var(--u));font-size:calc(132*var(--u));border-radius:calc(18*var(--u))}
+.ofr b{font-size:calc(34*var(--u))}.ofr p{font-size:calc(19*var(--u))}.ofr small{font-size:calc(18*var(--u))}
+/* game grid: log is a drawer, so the room gets the full window */
+#game{display:block;height:100vh;padding:calc(12*var(--u))}
+#room{height:100%;--sideW:calc(390*var(--u));gap:calc(12*var(--u));grid-template-rows:auto minmax(0,1fr) auto}
+.side{gap:calc(14*var(--u))}#sideT{align-items:stretch}
+.carve{width:100%;max-height:none;padding:calc(16*var(--u));border-radius:calc(20*var(--u))}
+.felt{gap:7%}.felt::before{inset:calc(14*var(--u))}
+#banner{top:calc(18*var(--u));font-size:calc(24*var(--u))}#banner.win{font-size:calc(36*var(--u));padding:calc(20*var(--u))}
+#ticker{position:absolute;left:calc(30*var(--u));right:calc(30*var(--u));bottom:calc(16*var(--u));text-align:center;font-size:calc(18*var(--u));color:#f1e5c8;text-shadow:0 1px 3px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.9}
+/* cards: every size derives from --cw (card width); --k = 1 design px of a 170px card */
+.card{--cw:calc(170*var(--u));--k:calc(var(--cw) / 170);width:var(--cw);height:calc(var(--cw)*1.47);border-radius:calc(12*var(--k));
+ box-shadow:inset 0 0 0 calc(4*var(--k)) #fffaf0,inset 0 0 0 calc(6*var(--k)) var(--band),0 calc(4*var(--k)) calc(10*var(--k)) rgba(0,0,0,.55)}
+.card .band{left:calc(6*var(--k));right:calc(6*var(--k));top:calc(6*var(--k));height:calc(28*var(--k));font-size:calc(16*var(--k));padding:calc(4*var(--k)) calc(10*var(--k)) 0 0;border-radius:calc(7*var(--k)) calc(7*var(--k)) 0 0}
+.card .cn{left:calc(10*var(--k));top:calc(6*var(--k));font-size:calc(22*var(--k))}.card .cn span{font-size:calc(18*var(--k))}
+.card .cn.br{right:calc(9*var(--k));bottom:calc(6*var(--k))}
+.card .glyph{top:calc(48*var(--k));width:calc(84*var(--k));height:calc(84*var(--k));font-size:calc(50*var(--k));border-width:calc(3*var(--k))}
+.card .nm{top:calc(146*var(--k));font-size:calc(26*var(--k))}
+.card .ds{top:calc(182*var(--k));left:calc(12*var(--k));right:calc(40*var(--k));font-size:calc(15*var(--k));line-height:1.25}
+.card .art{left:calc(6*var(--k));right:calc(6*var(--k));top:calc(34*var(--k));height:calc(150*var(--k));border-bottom-width:calc(3*var(--k))}
+.card.has-art .glyph{right:calc(10*var(--k));top:calc(146*var(--k));width:calc(32*var(--k));height:calc(32*var(--k));font-size:calc(18*var(--k));border-width:calc(2*var(--k))}
+.card.has-art .nm{top:calc(188*var(--k));font-size:calc(24*var(--k))}
+.card.has-art .ds{top:calc(218*var(--k));font-size:calc(13.5*var(--k));line-height:1.18;max-height:calc(32*var(--k));overflow:hidden}
+.card:hover{transform:translateY(calc(-10*var(--u)))}.card.sel{transform:translateY(calc(-22*var(--u)))}
+/* table piles */
+.pile,.slot{width:calc(150*var(--u));height:calc(220*var(--u))}.pile .card{--cw:calc(150*var(--u))}
+.slot{width:calc(232*var(--u));height:calc(336*var(--u));border-width:calc(3*var(--u));border-radius:calc(14*var(--u))}.slot .card{--cw:calc(220*var(--u))}
+.back{border-radius:calc(12*var(--u))}.back span{font-size:calc(40*var(--u))}
+.cap{font-size:calc(18*var(--u));bottom:calc(-32*var(--u))}#playSlot .cap{bottom:calc(-34*var(--u))}
+.fly{--cw:calc(220*var(--u))}
+/* seats: big portrait on the left, info on the right */
+.seat{max-width:none;width:100%;display:grid;grid-template-columns:calc(124*var(--u)) minmax(0,1fr);column-gap:calc(12*var(--u));align-content:start;
+ padding:calc(10*var(--u)) calc(12*var(--u));border-radius:calc(14*var(--u))}
+.side.h .seat{width:calc(390*var(--u))}
+.seat .top{display:contents}
+.seat .top>.avatar{grid-column:1;grid-row:1/8;align-self:start}
+.seat .top>div,.seat .top>.role,.seat>.stats,.seat>.skill,.seat>.eq{grid-column:2}
+.seat .top>div{grid-row:1;min-width:0}.seat .top>.role{grid-row:1;position:absolute;right:calc(10*var(--u));top:calc(43*var(--u));transform:translateY(-50%)}
+.avatar,.avatar.img{width:calc(124*var(--u));height:calc(124*var(--u));font-size:calc(56*var(--u));border-radius:calc(12*var(--u))}
+.avatar{border-width:calc(2*var(--u))}
+.seat h3{font-size:calc(27*var(--u));padding-right:calc(70*var(--u));white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.2;min-height:calc(65*var(--u))}.seat h3 small{font-size:calc(15*var(--u))}
+.role{font-size:calc(16*var(--u));padding:calc(2*var(--u)) calc(9*var(--u));border-radius:calc(4*var(--u))}
+.hp{gap:calc(4*var(--u));margin:calc(6*var(--u)) 0 calc(4*var(--u))}
+.stats{font-size:max(11px,calc(17*var(--u)));gap:calc(12*var(--u));flex-wrap:wrap}
+.mini i{width:calc(9*var(--u));height:calc(14*var(--u))}
+.skill{font-size:max(11px,calc(15*var(--u)));line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:calc(4*var(--u))}
+.skill.rr{display:block}
+.skbtn{display:none!important}
+.eq{gap:calc(4*var(--u));margin-top:calc(5*var(--u))}.chip{font-size:calc(14*var(--u));padding:calc(1*var(--u)) calc(8*var(--u));border-radius:calc(12*var(--u))}
+.seat.dead::after{font-size:calc(60*var(--u));width:calc(90*var(--u));height:calc(90*var(--u));line-height:calc(82*var(--u));right:auto;left:calc(28*var(--u))}
+/* bottom: my seat + hand */
+#bottom{gap:calc(12*var(--u))}
+#mySeat{align-items:stretch}#mySeat .seat{align-content:center}
+#handWrap{padding:calc(8*var(--u)) calc(14*var(--u));border-radius:calc(14*var(--u));display:flex;flex-direction:column;min-width:0}
+#mebar{font-size:calc(21*var(--u))}
+#hand{gap:0;min-height:0;height:calc(170*var(--u)*1.47 + 30*var(--u));padding:calc(26*var(--u)) 0 calc(4*var(--u));overflow:visible;justify-content:center}
+#hand .card{margin-left:var(--ov,calc(10*var(--u)))}#hand .card:first-child{margin-left:0}
+#hand .card:hover,#hand .card.sel{z-index:5}
+#btns{gap:calc(12*var(--u));min-height:calc(50*var(--u))}#hint{font-size:calc(18*var(--u))}
+/* log drawer */
+#side{position:fixed;top:calc(12*var(--u));right:calc(12*var(--u));bottom:calc(12*var(--u));width:calc(440*var(--u));z-index:45;transition:transform .25s;gap:calc(10*var(--u))}
+#side.closed{transform:translateX(calc(100% + 30*var(--u)))}
+#info{font-size:calc(18*var(--u));padding:calc(12*var(--u)) calc(16*var(--u))}#info h2{font-size:calc(26*var(--u))}
+#log{font-size:calc(17*var(--u));border-width:calc(6*var(--u))}
+#logbtn{position:fixed;top:calc(16*var(--u));right:calc(18*var(--u));z-index:46;font-size:calc(18*var(--u));padding:calc(6*var(--u)) calc(14*var(--u))}
+#side:not(.closed)~#logbtn{right:calc(468*var(--u))}
+.rbtn{font-size:calc(15*var(--u));padding:calc(2*var(--u)) calc(10*var(--u))}
+/* modal / rules / tip */
+#modal .box{min-width:calc(520*var(--u));max-width:calc(1200*var(--u));max-height:min(92vh,calc(100vh - var(--safe-bottom,0px) - 40px));overflow:auto;padding:calc(26*var(--u)) calc(32*var(--u))}
+#mtitle{font-size:calc(30*var(--u))}#msub{font-size:calc(19*var(--u))}#mbody{gap:calc(14*var(--u))}#mbody .card{--cw:calc(160*var(--u))}
+#rules .box{max-width:calc(900*var(--u));font-size:calc(19*var(--u))}#rules h3{font-size:calc(26*var(--u))}
+/* hover preview */
+#zoom{position:fixed;z-index:70;pointer-events:none;filter:drop-shadow(0 calc(10*var(--u)) calc(24*var(--u)) rgba(0,0,0,.8))}
+#zoom .card{--cw:calc(330*var(--u));transform:none!important}
+#zoom .zs{width:calc(460*var(--u));padding:calc(14*var(--u));border-radius:calc(14*var(--u));background:linear-gradient(160deg,var(--wood2),var(--wood3));border:2px solid var(--gold);color:var(--paper)}
+#zoom .zs .zimg{width:100%;aspect-ratio:1;border-radius:calc(10*var(--u));background-size:cover;background-position:center 20%;box-shadow:0 0 0 2px var(--gold)}
+#zoom .zs h3{margin:calc(10*var(--u)) 0 calc(4*var(--u));font-size:calc(32*var(--u));color:var(--gold2)}
+#zoom .zs p{margin:calc(4*var(--u)) 0;font-size:calc(19*var(--u));line-height:1.45}
+.card .art{height:calc(142*var(--k))}.card.has-art .glyph{top:calc(140*var(--k))}
+.card.has-art .nm{top:calc(180*var(--k))}
+.card.has-art .ds{top:calc(208*var(--k));font-size:calc(12.5*var(--k));line-height:1.15;max-height:calc(43*var(--k));right:calc(40*var(--k))}
+.skill{font-size:max(11px,calc(16*var(--u)))}
+#ticker{bottom:auto;top:calc(50*var(--u));font-size:calc(17*var(--u));color:var(--jade2)}
+#mySeat .seat h3{white-space:normal;padding-right:0}#mySeat .seat .top>.role{position:static;justify-self:start;grid-row:auto;margin-top:calc(4*var(--u))}
+.felt{padding-top:calc(56*var(--u))}#mySeat .seat .top>.role{grid-column:2}
+.felt{padding-top:calc(34*var(--u))}.slot{width:calc(222*var(--u));height:calc(322*var(--u))}.slot .card{--cw:calc(210*var(--u))}#playSlot .cap{bottom:calc(-30*var(--u))}
+
+/* ===== v7 magical-girl theme: no scaffolding borders, ornate glowing panels ===== */
+:root{--mg-pink:#ffb6e1;--mg-lav:#c9b6ff;--mg-gold:#ffe29a;--mg-ink:#2a1650;}
+body{background-color:#1b1036;color:#fdf4ff}
+body::before{background:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 70% 20%,#fff8,transparent),radial-gradient(1px 1px at 40% 80%,#fff9,transparent),radial-gradient(ellipse at 50% 120%,rgba(255,150,220,.18),transparent 60%)!important;opacity:1}
+.carve,.panel,#handWrap,.side,.seat{background-image:none!important;border:none!important;
+  background-color:rgba(38,22,78,.72)!important;box-shadow:0 0 0 1px rgba(255,226,154,.45),0 0 0 4px rgba(201,182,255,.12),0 8px 28px rgba(0,0,0,.45),inset 0 0 24px rgba(255,182,225,.12)!important;border-radius:calc(18*var(--u))!important;backdrop-filter:blur(3px)}
+.carve{background:rgba(30,16,64,.55)!important;padding:calc(10*var(--u))!important}
+.felt{border:none!important;border-radius:calc(28*var(--u))!important;background-size:cover!important;background-position:center!important;box-shadow:inset 0 0 calc(60*var(--u)) rgba(20,8,50,.85),0 0 calc(30*var(--u)) rgba(201,182,255,.25)!important}
+.felt::before,.felt::after{border:none!important;background:none!important;content:none!important}
+.slot{border:none!important;border-radius:50%!important;background:radial-gradient(circle,rgba(255,226,154,.16),rgba(201,182,255,.08) 55%,transparent 72%)!important;box-shadow:0 0 calc(40*var(--u)) rgba(255,182,225,.25)}
+.slot .cap{color:var(--mg-gold);text-shadow:0 0 6px #ff7fd0;border:none!important;background:rgba(40,20,80,.6);border-radius:99px;padding:2px 10px}
+#log div,.ofr,.rules,.rbtn,.chip,.box{border:none!important}
+#log div{border-bottom:none!important;padding:2px 0}
+.ofr{box-shadow:0 0 0 1px rgba(255,226,154,.35),0 4px 14px rgba(0,0,0,.35)!important;border-radius:14px!important;background:rgba(48,28,96,.8)!important}
+.seat.cur{box-shadow:0 0 0 2px var(--mg-gold),0 0 26px rgba(255,182,225,.8),0 8px 28px rgba(0,0,0,.45)!important}
+.seat.tgt{box-shadow:0 0 0 2px #ff7fd0,0 0 30px #ff7fd0!important}
+/* v9.8: dim only the dead seat's portrait/name/text — never the HP row (a child filter can't undo a parent one) */
+.seat.dead .avatar,.seat.dead h3,.seat.dead .role,.seat.dead .skill,.seat.dead .eq{filter:grayscale(.8) brightness(.6)}.seat.dead .stats{filter:grayscale(.6) brightness(.9)}
+.seat.dead{filter:none!important;background-color:rgba(20,12,30,.55)}
+.seat.equipped{animation:eqflash .9s}
+@keyframes eqflash{0%,100%{}40%{box-shadow:0 0 0 3px var(--mg-gold),0 0 40px var(--mg-gold)!important}}
+.avatar{border:none!important;box-shadow:0 0 0 2px var(--mg-gold),0 0 12px rgba(255,182,225,.7)!important}
+h1,.seal{color:var(--mg-gold)!important;text-shadow:0 0 10px #ff7fd0,0 0 22px rgba(201,182,255,.7)}
+.seal{border:none!important;background:radial-gradient(circle,#ff9ad5,#7a4bd6)!important;box-shadow:0 0 20px #ff9ad5!important;color:#fff!important}
+button{border:none!important;background:linear-gradient(180deg,#ffb6e1,#b48cff)!important;color:#2a1650!important;text-shadow:0 1px 0 rgba(255,255,255,.5)!important;box-shadow:0 2px 10px rgba(255,150,220,.5)!important;border-radius:99px!important}
+button:disabled{filter:grayscale(.7) brightness(.7)}
+select{background:linear-gradient(180deg,#3a2470,#241452)!important;color:#fff!important;border:1px solid var(--mg-gold)!important;border-radius:8px!important;box-shadow:0 2px 8px rgba(0,0,0,.4)!important}
+select:hover{filter:brightness(1.15)}
+/* equipment mini cards at seat */
+.eq{display:flex!important;flex-wrap:wrap;gap:calc(4*var(--u));margin-top:calc(4*var(--u))}
+.eqc{display:flex;align-items:center;gap:calc(5*var(--u));padding:calc(3*var(--u)) calc(7*var(--u)) calc(3*var(--u)) calc(3*var(--u));border-radius:calc(9*var(--u));
+  background:linear-gradient(135deg,rgba(255,226,154,.25),rgba(201,182,255,.22));box-shadow:0 0 0 1px rgba(255,226,154,.6),0 2px 8px rgba(0,0,0,.4);cursor:help;min-width:0}
+.eqc:hover{box-shadow:0 0 0 1px #fff,0 0 14px var(--mg-gold)}
+.eqc.s-weapon{background:linear-gradient(135deg,rgba(255,130,170,.45),rgba(150,90,230,.35))}
+.eqc.s-armor{background:linear-gradient(135deg,rgba(130,220,255,.4),rgba(150,120,255,.3))}
+.eqc.jd{background:linear-gradient(135deg,rgba(120,120,140,.5),rgba(60,40,90,.5));box-shadow:0 0 0 1px #ff7f9f}
+.eqi{width:calc(30*var(--u));height:calc(40*var(--u));flex:none;border-radius:calc(5*var(--u));background:#3a2470 center/cover;display:grid;place-items:center;font-size:calc(18*var(--u));box-shadow:0 0 0 1px rgba(255,255,255,.5)}
+.eqt{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.eqt b{font-size:max(11px,calc(15*var(--u)));color:#fff;white-space:normal;word-break:keep-all}
+.eqt small{font-size:max(11px,calc(12.5*var(--u)));color:var(--mg-gold);white-space:normal;word-break:keep-all}
+/* v8: equipment wraps 2-per-row so side seats never clip at 1280x720; v9.7: a lone chip
+   (e.g. the top-center leader with one trait) grows to use the full row instead of staying
+   pinned at half width, and <wbr> after ・ (inserted in ui.js) gives the CJK line-breaker a
+   clean break point so it doesn't split a word like 守護妖精 mid-character */
+.eq .eqc{flex:1 1 calc(50% - 2*var(--u));max-width:calc(50% - 2*var(--u));min-width:0;box-sizing:border-box;padding:calc(2*var(--u)) calc(6*var(--u)) calc(2*var(--u)) calc(2*var(--u))}
+.eq .eqc:only-child{max-width:100%}
+.eq .eqi{width:calc(24*var(--u));height:calc(32*var(--u))}
+.eq .eqt b,.eq .eqt small{overflow:visible;white-space:normal}
+.eq .eqt b{font-size:max(11px,calc(14*var(--u)))}
+.eq .eqt wbr{line-height:0}
+.seat{overflow:visible!important}
+#modal .box{background:linear-gradient(160deg,rgba(70,40,130,.96),rgba(40,20,90,.96))!important;border:2px solid #ffd6f0!important;box-shadow:0 0 40px rgba(255,150,220,.5)!important;color:#fff}
+#mtitle{color:#ffe6f6}
+/* side panel (info + log) joins the glass theme instead of the old parchment look */
+#info,#log{background-image:none!important;background-color:rgba(38,22,78,.72)!important;border:none!important;
+  box-shadow:0 0 0 1px rgba(255,226,154,.45),0 0 0 4px rgba(201,182,255,.12),0 8px 28px rgba(0,0,0,.45),inset 0 0 24px rgba(255,182,225,.12)!important;
+  border-radius:calc(18*var(--u))!important;backdrop-filter:blur(3px)}
+#log{color:#fdf4ff!important}
+#log div{border-bottom:1px dotted rgba(255,226,154,.2)!important}
+#log .turn{color:#ffd36a!important}
+#log .dmg{color:#ff8fbd!important}
+#log .big{color:#ffe29a!important;text-shadow:0 0 6px rgba(255,150,220,.6)}
+
+/* v9.1 Precure heart-gem HP */
+.hp{display:flex;align-items:center;gap:calc(3*var(--u));flex-wrap:nowrap;margin:calc(5*var(--u)) 0 calc(4*var(--u))}
+.hpi{flex:none;width:calc(27*var(--u));height:calc(24*var(--u));min-width:16px;min-height:14px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 22'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.35' cy='.3' r='.8'%3E%3Cstop offset='0' stop-color='%23ffd0ea'/%3E%3Cstop offset='.45' stop-color='%23ff4fa8'/%3E%3Cstop offset='1' stop-color='%23b0105e'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M12 20.5 3.2 12A5.3 5.3 0 0 1 12 4.6 5.3 5.3 0 0 1 20.8 12Z' fill='url(%23g)' stroke='%23ffd36a' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cellipse cx='8' cy='8.3' rx='2.4' ry='1.5' fill='%23fff' opacity='.9' transform='rotate(-35 8 8.3)'/%3E%3Ccircle cx='15.5' cy='13.5' r='.9' fill='%23fff' opacity='.7'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 0 2px rgba(255,120,200,.8))}
+.hpi.empty{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 22'%3E%3Cpath d='M12 20.5 3.2 12A5.3 5.3 0 0 1 12 4.6 5.3 5.3 0 0 1 20.8 12Z' fill='rgba(80,55,105,.6)' stroke='%23f3d98f' stroke-width='2.2' stroke-linejoin='round' stroke-dasharray='0'/%3E%3C/svg%3E");filter:drop-shadow(0 0 2px rgba(243,217,143,.6));opacity:1}
+.hpn{display:none;margin-left:calc(4*var(--u));font-size:calc(14*var(--u));color:#ffe3f3;text-shadow:0 0 3px #c0307a;font-weight:700}
+.hpn.on{display:inline}
+.hp.hpo{justify-content:center} .hp.hpo .hpn{display:none}
+/* v9.2 typography: jf open 粉圓 (OFL 1.1), bundled subset */
+@font-face{font-family:"Huninn";src:url("assets/fonts/jf-openhuninn-subset.woff2") format("woff2");font-display:block}
+body,button,input,select,textarea{font-family:"Huninn",sans-serif!important;letter-spacing:.02em}
+h1,h3,.card .nm,#mtitle,.ofr b,.seal,.role{font-family:"Huninn",sans-serif!important;font-weight:700}
+h1{color:#fff!important;-webkit-text-stroke:0;text-shadow:0 0 2px #ff4fa8,0 0 8px #ff7cc8,0 0 18px rgba(255,120,200,.8),2px 2px 0 #b0156a!important;letter-spacing:.06em}
+h3{color:#fff5fb!important;text-shadow:0 0 1px #9b1460,0 1px 2px #9b1460,0 0 6px rgba(255,110,190,.8)!important}
+.card .nm{color:#d0146f!important;text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff,0 0 5px #ffd0ea!important;letter-spacing:.04em}
+.card .ds{font-weight:400;color:#3e2a4a!important;line-height:1.28!important;font-size:max(11px,calc(13*var(--k)))!important;text-shadow:0 0 2px rgba(255,255,255,.9)}
+.card .band,.card .cn{font-family:"Huninn",sans-serif;font-weight:700}
+.skill,.stats,#mebar,#hint,#log,.ofr p{font-family:"Huninn",sans-serif}
+#mtitle,.ofr b{color:#fff!important;text-shadow:0 0 6px #ff6fbe,1px 1px 0 #a5125f}
+.card .ds{font-size:max(10.5px,calc(12.5*var(--k)))!important;line-height:1.18!important;letter-spacing:0!important}
+
+/* v9.4: respect prefers-reduced-motion — kill looping/animated motion, keep state changes instant */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+
+/* ===== v9.5: finish the theme pass — a few leftover plain-web elements didn't get the v7 glass
+   reskin (native <select> chrome, flat role badges, flat card-header bars, a stray wood-and-rope
+   rules dialog), plus hooks so ChatGPT-drawn frame art drops in later without any code changes. */
+
+/* native <select> still looked like a browser form control: square box + OS arrow glyph.
+   appearance:none + a hand-drawn caret keeps it a real <select> (tests drive it via select_option)
+   but makes it read as a pill control that matches the buttons next to it. */
+select{appearance:none;-webkit-appearance:none;-moz-appearance:none;border-radius:999px!important;
+  border:1px solid rgba(255,226,154,.55)!important;box-shadow:0 2px 8px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08)!important;
+  background-image:linear-gradient(180deg,#3a2470,#241452),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 7l5 6 5-6' fill='none' stroke='%23ffe29a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;background-position:0 0,calc(100% - 11*var(--u,1px)) center!important;background-size:auto,calc(15*var(--u,1px))!important;
+  padding-right:calc(32*var(--u,1px))!important}
+
+/* role badge: was a flat rect with a hard 1px white-ish border (incl. the hidden-identity "？"
+   chip) — the one square-cornered, hard-bordered sticker left on an otherwise glowing seat card. */
+.role{border:none!important;border-radius:999px!important;box-shadow:0 0 0 1px rgba(255,226,154,.55),0 2px 6px rgba(0,0,0,.45)!important;
+  text-shadow:0 1px 1px rgba(0,0,0,.5);font-weight:700}
+.role:not(.sheriff):not(.deputy):not(.outlaw):not(.renegade){background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(0,0,0,.25))!important;color:#e9def2}
+.role.sheriff{background:linear-gradient(160deg,#ffe8b0,#c89a2e)!important;color:#3a2200!important}
+.role.deputy{background:linear-gradient(160deg,#a7dcff,#2d6fb0)!important;color:#07213a!important}
+.role.outlaw{background:linear-gradient(160deg,#ff9e9e,#a1332b)!important;color:#3a0e0a!important}
+.role.renegade{background:linear-gradient(160deg,#dcbaff,#6a3aa8)!important;color:#20072e!important}
+
+/* hand-count tally dashes next to "手牌 N" were still the old green/gold western-theme chip color,
+   the one spot that never got recolored to the pink/purple palette used everywhere else. */
+.mini i{background:linear-gradient(#ffb6e1,#8a4bc4)!important;border-color:rgba(255,226,154,.7)!important}
+
+/* card header bar ("攻擊"/"延時"/...) was a single flat paint-bucket rectangle; a soft top-sheen
+   turns it into a satin ribbon instead of a <div style="background:red"> look. */
+.card .band{background-image:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,0) 55%),linear-gradient(var(--band),var(--band));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 4px rgba(0,0,0,.35);text-shadow:0 1px 2px rgba(0,0,0,.45)}
+
+/* #rules was the only remaining "brown wood + rope border" panel from before the v7 reskin —
+   every other dialog (#modal, .panel) is dark-purple glass; this makes #rules match them. */
+#rules .box{background-image:none!important;background-color:rgba(38,22,78,.88)!important;border:none!important;
+  box-shadow:0 0 0 1px rgba(255,226,154,.45),0 0 0 4px rgba(201,182,255,.12),0 8px 28px rgba(0,0,0,.5),inset 0 0 24px rgba(255,182,225,.12)!important;
+  border-radius:calc(18*var(--u))!important;backdrop-filter:blur(3px);color:#fdf4ff}
+#rules h3{color:#ffe29a!important;text-shadow:0 0 6px #ff7fd0,1px 1px 0 #a5125f;letter-spacing:.04em}
+#rules b{color:#ffd36a}
+
+/* ---- art-asset hooks: web/assets/ui/*.png, wired through the same ASSETS manifest used for
+   char/card art. Every rule here is gated behind a body.has-ui-* class that ui.js only adds once
+   it confirms the file exists, so with no art dropped in yet (today) none of this matches anything
+   and the page renders exactly as the hand-styled CSS above already does — no broken images, no
+   console errors, no layout shift. See art/gpt/ui_asset_requests.md for what each one is and its
+   exact pixel size / 9-slice insets (the numbers below must match those). */
+:root{--ui-card-frame:none;--ui-seat-frame:none;--ui-panel-frame:none;--ui-button:none;--ui-role-badge:none;
+  --ui-eq-chip-frame:none;--ui-title-logo:none;--ui-stage-ring:none;--ui-hp-gem:none}
+
+body.has-ui-card-frame .card::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+  border-style:solid;border-width:calc(22*var(--k));border-image-source:var(--ui-card-frame);border-image-slice:139 95 139 95;border-image-repeat:stretch}
+
+body.has-ui-seat-frame .seat::before{content:"";position:absolute;inset:calc(-6*var(--u));pointer-events:none;z-index:1;
+  border-style:solid;border-width:calc(20*var(--u));border-image-source:var(--ui-seat-frame);border-image-slice:103 95 103 95;border-image-repeat:stretch}
+body.has-ui-seat-frame .seat>*{position:relative;z-index:2}
+
+body.has-ui-panel-frame #modal .box,body.has-ui-panel-frame #rules .box{position:relative}
+body.has-ui-panel-frame .panel::before,body.has-ui-panel-frame #modal .box::before,body.has-ui-panel-frame #rules .box::before{
+  content:"";position:absolute;inset:calc(-10*var(--u));pointer-events:none;z-index:1;
+  border-style:solid;border-width:calc(34*var(--u));border-image-source:var(--ui-panel-frame);border-image-slice:186;border-image-repeat:stretch}
+
+body.has-ui-button button{position:relative;background:none!important;box-shadow:none!important;border:none!important}
+body.has-ui-button button::before{content:"";position:absolute;inset:calc(-8*var(--u));pointer-events:none;z-index:-1;
+  border-style:solid;border-width:calc(22*var(--u));border-image-source:var(--ui-button);border-image-slice:53 61 53 61 fill;border-image-repeat:stretch}
+
+body.has-ui-role-badge .role{background:none!important;box-shadow:none!important}
+body.has-ui-role-badge .role::before{content:"";position:absolute;inset:calc(-6*var(--u));pointer-events:none;z-index:-1;
+  border-style:solid;border-width:calc(14*var(--u));border-image-source:var(--ui-role-badge);border-image-slice:39;border-image-repeat:stretch}
+body.has-ui-role-badge .role.sheriff::before{filter:hue-rotate(0deg) saturate(1.3)}
+body.has-ui-role-badge .role.deputy::before{filter:hue-rotate(170deg) saturate(1.2)}
+body.has-ui-role-badge .role.outlaw::before{filter:hue-rotate(-60deg) saturate(1.4)}
+body.has-ui-role-badge .role.renegade::before{filter:hue-rotate(60deg) saturate(1.1)}
+
+body.has-ui-eq-chip-frame .eqc{position:relative;background:none!important;box-shadow:none!important}
+body.has-ui-eq-chip-frame .eqc::before{content:"";position:absolute;inset:calc(-3*var(--u));pointer-events:none;z-index:-1;
+  border-style:solid;border-width:calc(10*var(--u));border-image-source:var(--ui-eq-chip-frame);border-image-slice:39;border-image-repeat:stretch}
+/* the frame art's painted ring reaches ~7u inside the chip's own edge (border-width 10u
+   minus the -3u outward inset), so the chip needs extra inner padding or its text touches
+   the frame; bump padding past that ring on every side */
+body.has-ui-eq-chip-frame .eq .eqc{padding:calc(9*var(--u)) calc(13*var(--u)) calc(9*var(--u)) calc(9*var(--u))}
+
+/* logo art has no text baked in by design (see art/gpt/ui_asset_requests.md) — it sits behind the
+   real glowing <h1> text as a background; must NOT hide the text (title has to stay readable) */
+body.has-ui-title-logo .panel h1{background-image:var(--ui-title-logo);
+  background-size:contain;background-position:center;background-repeat:no-repeat;min-height:calc(90*var(--u))}
+
+body.has-ui-stage-ring #playSlot::before{content:"";position:absolute;inset:calc(-40*var(--u));pointer-events:none;z-index:-1;
+  background-image:var(--ui-stage-ring);background-size:contain;background-position:center;background-repeat:no-repeat}
+
+body.has-ui-hp-gem .hpi{background-image:var(--ui-hp-gem)!important}
+/* v9.7 loop r3: empty pip reuses the filled gem's own art (grayscale + dimmed + a light
+   drop-shadow outline) instead of the separate hp_gem_empty asset, so filled/empty read as
+   two states of one icon rather than two different icon families; still bright enough to
+   read clearly against the dark seat background. */
+body.has-ui-hp-gem .hpi.empty{background-image:var(--ui-hp-gem)!important;filter:grayscale(1) brightness(1.6) opacity(.55) drop-shadow(0 0 2px rgba(255,255,255,.9))!important;opacity:1!important}
+/* v9.7 loop r2: modal decline button visible + own centred row */
+#modal #mbody button.ghost{flex-basis:100%;max-width:max-content;margin:calc(10*var(--u)) auto 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.05))!important;border:1.5px solid #ffd6f0!important;color:#fff;text-shadow:0 1px 2px rgba(60,0,60,.6)}
+body.has-ui-button #modal #mbody button.ghost::before{opacity:.55}
+#np,#spd,#seat,#rolep{width:calc(150*var(--u));min-width:0;text-overflow:ellipsis}
+
+/* ===== v9.8 (layout loop r4 + known minors) ===== */
+/* r4 BLOCKER: effect text floors at 10.5px on small cards; reserve exactly 2 floored lines above the
+   card's bottom edge and lift name/art/badge by the same amount, so the 2nd line is never sliced */
+.card.has-art{--dsf:max(10.5px,calc(12.5*var(--k)));--dst:min(calc(218*var(--k)),calc(238*var(--k) - 2.44*var(--dsf)));--nmt:min(calc(188*var(--k)),calc(var(--dst) - 29*var(--k)))}
+.card.has-art .ds{top:var(--dst)!important;font-size:var(--dsf)!important;line-height:1.22!important;max-height:calc(2.44*var(--dsf) + 1px)!important}
+.card.has-art .nm{top:var(--nmt)!important}
+.card.has-art .art{height:calc(var(--nmt) - 38*var(--k))!important}
+.card.has-art .glyph{top:calc(var(--nmt) - 42*var(--k))!important}
+/* r4 MAJOR: with 2 seats in a side column, let them grow to fill the column so left/right columns
+   always line up top and bottom instead of each being centred on its own content height */
+.side.v:has(>.seat+.seat){justify-content:stretch}
+.side.v:has(>.seat+.seat)>.seat{flex:1 1 auto}
+/* r4 MINOR: targeting arrow is lighter so the table cards under it stay legible */
+#fx line{opacity:.6;stroke-width:3}
+/* known minor: dialog cancel/decline button always on its own centred row below the choices */
+#mbody::before{content:"";order:1;flex-basis:100%;height:0}
+#mbody>*{order:0}
+#modal #mbody button.ghost{order:2;flex:0 0 auto;max-width:none;margin:0 auto}
+/* known minor: equipment chip text larger */
+.eq .eqt b{font-size:max(13px,calc(17*var(--u)))!important;line-height:1.12}
+.eq .eqt small{font-size:max(11.5px,calc(14*var(--u)))!important}
+.eq .eqi{width:calc(28*var(--u));height:calc(37*var(--u))}
+/* known minor: select values text-centred (caret padding balanced on both sides) */
+select{text-align:center;text-align-last:center;padding-left:calc(32*var(--u,1px))!important}
+select option{text-align:center}
+/* r4 follow-up: side seats now reach the top edge, so the 戰報 toggle moves to the empty bottom-right
+   corner of the hand area instead of sitting on the top-right seat's frame */
+#logbtn{top:auto!important;bottom:calc(14*var(--u))!important}
+/* r5 MAJOR: equipment chips span the full seat width (under the portrait too) so two half-width
+   chips have room for the enlarged titles; titles may still wrap rather than overflow */
+.seat>.eq{grid-column:1/-1!important}
+.eq .eqt b{word-break:normal!important;overflow-wrap:anywhere}
+.eq .eqt small{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden!important}
+/* r5 MAJOR: hand-size pips capped at 4 (the number is shown anyway) so the stat line width no longer
+   depends on hand size and never wraps differently from its neighbours */
+.mini i:nth-child(n+5){display:none}
+/* r6 MAJOR: heart seal clears the panel frame's corner scrollwork */
+.seal{right:calc(58*var(--u))!important;top:calc(58*var(--u))!important}
+/* r6 MINOR: explicit gap between the start and rules buttons */
+#ropen{margin-left:calc(16*var(--u))}
+/* v9.8 r7 MAJOR: ticker never smears over the played card — own legible pill, hidden once the win banner shows */
+#ticker{background:rgba(40,20,80,.72);border-radius:99px;padding:2px calc(12*var(--u));width:max-content;max-width:80%;margin:0 auto;left:0;right:0;z-index:6}
+.felt:has(#banner.win) #ticker{visibility:hidden}
+#banner.win{background:rgba(40,20,80,.78);border-radius:99px;padding:calc(6*var(--u)) calc(28*var(--u));width:max-content;max-width:90%;left:0;right:0;margin:0 auto}
