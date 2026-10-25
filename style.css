@@ -445,3 +445,104 @@ select option{text-align:center}
 #ticker{background:rgba(40,20,80,.72);border-radius:99px;padding:2px calc(12*var(--u));width:max-content;max-width:80%;margin:0 auto;left:0;right:0;z-index:6}
 .felt:has(#banner.win) #ticker{visibility:hidden}
 #banner.win{background:rgba(40,20,80,.78);border-radius:99px;padding:calc(6*var(--u)) calc(28*var(--u));width:max-content;max-width:90%;left:0;right:0;margin:0 auto}
+
+/* ===================================================================
+   v9.9 text occlusion fixes (tests/occl.js audit, see review/occl_before.json)
+   ===================================================================
+   Three root causes accounted for almost every offender:
+   1) The body.has-ui-*-frame decorative ::before border-image rings (art/gpt
+      ui/*.png assets — real files, so these hooks are live, not dormant) were
+      painted with z-index 1..3, i.e. ABOVE the card/seat text instead of
+      behind it ("frame-over" — the frame literally hides the glyph).
+   2) Even where that's fixed, several text nodes still sat geometrically
+      inside the ring's own band (the frame's border-width minus its own
+      outward inset), so the ornate pattern printed right behind the text
+      ("on-frame-border" — visually busy/low-contrast even though not hidden).
+   3) #banner.win was `inset:0` over the entire felt, so elementFromPoint
+      always resolved to the banner instead of the played/discarded cards
+      underneath it ("covered-by div#banner.win"), even though the banner is
+      visually translucent.
+   Fix: push every frame ::before behind its content with isolation:isolate
+   on the host (so a negative z-index can't escape below an ancestor's own
+   background) + shrink each ring's border-width so the existing text insets
+   clear it, nudge the few insets that were still inside the new thinner
+   ring, give buttons enough vertical padding to clear their ring, and give
+   the win banner its own pill near the top of the table instead of covering
+   the cards. No IDs/classes/DOM changed; src/engine.js untouched. */
+
+/* -- card frame: was z-index 3 (above band/cn/glyph/ds), ring 22*k thick -- */
+.card{isolation:isolate}
+body.has-ui-card-frame .card::before{z-index:-1;border-width:calc(6*var(--k))}
+.card .band{top:calc(10*var(--k));left:calc(10*var(--k));right:calc(10*var(--k))}
+.card .cn{top:calc(10*var(--k))}
+.card .cn.br{bottom:calc(10*var(--k));right:calc(10*var(--k))}
+
+/* -- seat frame: was z-index 1 (above h3/skill), ring 20*u thick vs. the
+   seat's unchanged 10*u/12*u padding — shrinking the ring to clear it is
+   simpler than re-deriving every absolute offset under .top{display:contents} */
+.seat{isolation:isolate}
+body.has-ui-seat-frame .seat::before{z-index:-1;border-width:calc(12*var(--u))}
+
+/* -- panel/modal/rules frame: same z-index bug; not geometrically overlapping
+   any text today (padding already clears it) but fixed so it can't regress,
+   plus #rules gets scaled (not flat-px) padding so it tracks the ring at
+   every viewport size */
+.panel,#modal .box,#rules .box{isolation:isolate}
+body.has-ui-panel-frame .panel::before,
+body.has-ui-panel-frame #modal .box::before,
+body.has-ui-panel-frame #rules .box::before{z-index:-1;border-width:calc(16*var(--u))}
+#rules .box{padding:calc(26*var(--u)) calc(30*var(--u))}
+
+/* -- buttons: has-ui-button's ring was already z-index:-1 (correctly behind)
+   but 22*u thick with a -8*u outward inset = 14*u of inward intrusion, more
+   than the button's 8*u/12*u/4*u vertical padding, so labels sat on top of
+   the painted ring. Give every button size enough vertical padding to clear
+   it (.pickh button needs its own rule: it already beats the plain `button`
+   selector on specificity, so the generic bump alone wouldn't reach #reroll). */
+button{padding-top:calc(16*var(--u));padding-bottom:calc(16*var(--u))}
+button.big{padding-top:calc(18*var(--u));padding-bottom:calc(18*var(--u))}
+.pickh button{padding-top:calc(16*var(--u));padding-bottom:calc(16*var(--u))}
+/* #logbtn and the inline .rbtn ("規則說明" next to the side-panel heading)
+   are too small to carry a 14*u-thick ring at all — drop the frame on just
+   these two and fall back to the flat pink/purple pill used everywhere
+   before the art/gpt/ui_asset_requests.md assets existed, so they stay compact. */
+#logbtn::before,body.has-ui-button .rbtn::before{content:none!important}
+#logbtn,body.has-ui-button button.rbtn{background:linear-gradient(180deg,#ffb6e1,#b48cff)!important;
+  color:#2a1650!important;text-shadow:0 1px 0 rgba(255,255,255,.5);
+  box-shadow:0 2px 10px rgba(255,150,220,.5)!important;border-radius:999px!important;border:none!important}
+
+/* -- #banner.win: used to be inset:0 over the whole felt (always the
+   topmost hit target over every played/discard-pile card). Give it its own
+   pill near the top of the table instead of covering the card row. */
+#banner.win{position:absolute;inset:auto;top:calc(-14*var(--u));left:50%;right:auto;bottom:auto;
+  transform:translateX(-50%);width:max-content;max-width:min(92%,calc(900*var(--u)));height:auto;
+  display:block;white-space:normal;text-align:center;font-size:calc(22*var(--u));
+  padding:calc(7*var(--u)) calc(24*var(--u));background:rgba(20,10,40,.94);border-radius:999px;
+  box-shadow:0 0 0 1px rgba(255,226,154,.6),0 10px 28px rgba(0,0,0,.6);z-index:9}
+/* r1 follow-up: even up in the carve's own border padding (no text lives there — just the ❖
+   corner marks), the pill's bottom edge still grazed the top-most played/discard card by a few px
+   at the smallest tested viewport. Give the win state a little extra breathing room above the card
+   row instead of shrinking the pill further (it's only a few px and only while g.over). */
+.felt:has(#banner.win){padding-top:calc(46*var(--u))}
+
+/* -- pile (deck/discard) cards render at ~150*u — far too narrow for the full effect-text
+   paragraph to fit the 2-line budget .ds already reserves (see v9.8 r4 BLOCKER above), so a
+   longer description (e.g. 暗黑炸彈's) wraps to a 3rd line that .card's own overflow:hidden then
+   clips mid-character ("clipY"/"clipped-by"). Piles are a glance-at-the-stack affordance, not a
+   place anyone reads full rules text (hand/dialog/zoom cards already show it at readable size),
+   so just don't render it there instead of truncating it illegibly. */
+.pile .card .ds{display:none}
+
+/* -- #guidebtn (new 遊戲說明 toggle, fixed top-center): collided with the top-center seat's
+   name and, like #logbtn/.rbtn, was too small to carry the has-ui-button ring. Stack it above
+   #logbtn in the one corner that's empirically clear of seats/cards instead. */
+#guidebtn{position:fixed!important;top:auto!important;left:auto!important;right:calc(18*var(--u,1px))!important;
+  bottom:calc(60*var(--u,1px))!important;transform:none!important;background:#ff8fc8!important}
+#guidebtn::before{content:none!important}
+/* v9.9: #guidebtn sits in the bottom row left of #logbtn (the 1280 hand reached its stacked spot) */
+#guidebtn{bottom:calc(14*var(--u,1px))!important;right:calc(112*var(--u,1px))!important;height:calc(33*var(--u,1px))!important;padding:0 calc(14*var(--u,1px))!important;font-size:calc(17*var(--u,1px))!important;min-width:0!important}
+#side:not(.closed)~#guidebtn{right:calc(562*var(--u,1px))!important}
+/* v9.9 final: at the end screen the win pill + extra top padding squeezed the played card at 1280x720,
+   so its corner index slid under the pill/hand row. Shrink the table cards slightly only while game over. */
+.felt:has(#banner.win) .slot{height:calc(260*var(--u));width:calc(180*var(--u))}
+.felt:has(#banner.win) .slot .card{--cw:calc(170*var(--u))}
